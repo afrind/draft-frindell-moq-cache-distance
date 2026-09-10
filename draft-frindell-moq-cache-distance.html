@@ -4,15 +4,19 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>MOQT Cache Distance Property</title>
-<meta content="Your Name Here" name="author">
+<title>Cache Distance Property for MOQT</title>
+<meta content="Alan Frindell" name="author">
 <meta content="
-       TODO Abstract 
+       This document defines CACHE_DISTANCE, a MOQT Object Property that a Relay
+adds to the Objects it sends on a FETCH stream to report how far away the
+cache that supplied each Object was.  The value composes across a chain of
+Relays, and is carried only where it changes, so a Fetch served by a mix of
+caches costs one Property per transition rather than one per Object. 
     " name="description">
 <meta content="xml2rfc 3.34.0" name="generator">
-<meta content="next generation" name="keyword">
-<meta content="unicorn" name="keyword">
-<meta content="AI-native" name="keyword">
+<meta content="media over quic" name="keyword">
+<meta content="cache" name="keyword">
+<meta content="relay" name="keyword">
 <meta content="draft-frindell-moq-cache-distance-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.34.0
@@ -1046,7 +1050,7 @@ svg {
 <td class="right">September 2026</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Here</td>
+<td class="left">Frindell</td>
 <td class="center">Expires 14 March 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
@@ -1055,7 +1059,7 @@ svg {
 <div id="internal-metadata" class="document-information">
 <dl id="identifiers">
 <dt class="label-workgroup">Workgroup:</dt>
-<dd class="workgroup">WG Working Group</dd>
+<dd class="workgroup">Media Over QUIC</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
 <dd class="internet-draft">draft-frindell-moq-cache-distance-latest</dd>
 <dt class="label-published">Published:</dt>
@@ -1063,22 +1067,26 @@ svg {
 <time datetime="2026-09-10" class="published">10 September 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
-<dd class="intended-status">Informational</dd>
+<dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
 <dd class="expires"><time datetime="2027-03-14">14 March 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
-      <div class="author-name">Y. N. Here</div>
-<div class="org">Your Organization Here</div>
+      <div class="author-name">A. Frindell</div>
+<div class="org">Meta</div>
 </div>
 </dd>
 </dl>
 </div>
-<h1 id="title">MOQT Cache Distance Property</h1>
+<h1 id="title">Cache Distance Property for MOQT</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">TODO Abstract<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document defines CACHE_DISTANCE, a MOQT Object Property that a Relay
+adds to the Objects it sends on a FETCH stream to report how far away the
+cache that supplied each Object was.  The value composes across a chain of
+Relays, and is carried only where it changes, so a Fetch served by a mix of
+caches costs one Property per transition rather than one per Object.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1086,14 +1094,15 @@ svg {
       </h2>
 <p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
 <p id="section-note.1-2">
-        The latest revision of this draft can be found at <span><a href="https://example.com/LATEST">https://example.com/LATEST</a></span>.
+        The latest revision of this draft can be found at <span><a href="https://afrind.github.io/draft-frindell-moq-cache-distance/draft-frindell-moq-cache-distance.html">https://afrind.github.io/draft-frindell-moq-cache-distance/draft-frindell-moq-cache-distance.html</a></span>.
         Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-frindell-moq-cache-distance/">https://datatracker.ietf.org/doc/draft-frindell-moq-cache-distance/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
 <p id="section-note.1-3">
         Discussion of this document takes place on the
-        WG Working Group mailing list (<span><a href="mailto:WG@example.com">mailto:WG@example.com</a></span>),
-        which is archived at <span><a href="https://example.com/WG">https://example.com/WG</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+        Media Over QUIC Working Group mailing list (<span><a href="mailto:moq@ietf.org">mailto:moq@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/moq/">https://mailarchive.ietf.org/arch/browse/moq/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/moq/">https://www.ietf.org/mailman/listinfo/moq/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
 <p id="section-note.1-4">Source for this draft and an issue tracker can be found at
-        <span><a href="https://github.com/USER/REPO">https://github.com/USER/REPO</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+        <span><a href="https://github.com/afrind/draft-frindell-moq-cache-distance">https://github.com/afrind/draft-frindell-moq-cache-distance</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1150,19 +1159,33 @@ svg {
             <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-cache-distance" class="internal xref">Cache Distance</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-stream-state" class="internal xref">Stream State</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-forwarding" class="internal xref">Forwarding</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-processing-rules" class="internal xref">Processing Rules</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.7.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1173,7 +1196,21 @@ svg {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">TODO Introduction<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1">A subscriber issuing a Fetch to a Media over QUIC Transport (MOQT) <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>
+Relay cannot tell how the request was served.  The Objects may have come from
+the Relay's own cache, from a cache further upstream, or from the Original
+Publisher, and the difference matters for operating a Relay deployment:
+it is the basis for cache hit rate, for judging whether a Relay is well
+positioned for a Track, and for measuring load reaching the origin.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This document defines a single Object Property that reports that information
+per Object.  Because a Fetch is commonly satisfied from more than one source
+-- the leading Objects from a nearby cache and the remainder from upstream --
+the value is carried only on the Objects where it changes and applies to the
+Objects that follow, so the cost is proportional to the number of transitions
+rather than to the number of Objects.  The value also composes across a chain
+of Relays with a local rule at each hop.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">This document defines only the Property.  It does not define cache admission,
+eviction, or placement policy, nor any required receiver behavior.<a href="#section-1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1185,14 +1222,123 @@ svg {
 "<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
 appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">This document uses the terms Track, Object, Group, Relay, and Original
+Publisher as defined in <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>.<a href="#section-2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="security">
+<div id="cache-distance">
 <section id="section-3">
-      <h2 id="name-security-considerations">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      <h2 id="name-cache-distance">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-cache-distance" class="section-name selfRef">Cache Distance</a>
       </h2>
-<p id="section-3-1">TODO Security<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-1">CACHE_DISTANCE is an Object Property added by a Relay to the Objects it
+sends on a FETCH stream, giving the number of hops between the receiver
+and the cache that supplied the Object.  The value is a variable-length
+integer.  A value of 1 means the Relay serving the Fetch supplied the
+Object from its own cache; a value of n greater than 1 means a cache
+n-1 hops upstream of that Relay supplied it.  A value of 0 means the
+Object is not attributed to any cache: it came from the Original
+Publisher, or the path is not fully instrumented.  Because the property
+describes how a request was served rather than the content itself, it
+applies only to Objects sent on a FETCH stream (<span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>); a receiver
+that sees it on a Subgroup stream or a datagram <span class="bcp14">MUST</span> ignore it.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+        <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+          <tr>
+            <th class="text-right" rowspan="1" colspan="1">Value</th>
+            <th class="text-left" rowspan="1" colspan="1">Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-right" rowspan="1" colspan="1">0</td>
+            <td class="text-left" rowspan="1" colspan="1">Not attributed to a cache: from the Original Publisher, or the path is not fully instrumented</td>
+          </tr>
+          <tr>
+            <td class="text-right" rowspan="1" colspan="1">1</td>
+            <td class="text-left" rowspan="1" colspan="1">Supplied by the Relay serving this Fetch</td>
+          </tr>
+          <tr>
+            <td class="text-right" rowspan="1" colspan="1">n</td>
+            <td class="text-left" rowspan="1" colspan="1">Supplied by a cache n-1 hops upstream of that Relay</td>
+          </tr>
+        </tbody>
+      </table>
+<div id="cache-distance-state">
+<section id="section-3.1">
+        <h3 id="name-stream-state">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-stream-state" class="section-name selfRef">Stream State</a>
+        </h3>
+<p id="section-3.1-1">The property is stateful for the duration of a FETCH stream.  Its value
+applies to the Object that carries it and to every subsequent Object on
+the same stream until another CACHE_DISTANCE appears.  The state
+initializes to 0, so a Relay that does not implement this property sends
+nothing and the entire Fetch correctly reads as unattributed.  A Relay
+that does implement it <span class="bcp14">MUST</span> send the property on an Object whose value
+differs from the current state, and <span class="bcp14">MUST NOT</span> send a value equal to the
+current state.  Objects with a status other than Normal cannot carry
+properties (<span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>) and do not disturb the state, which carries across
+them.  The state does not survive the end of the stream: a Fetch resumed
+as a new request begins again at 0.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="cache-distance-forwarding">
+<section id="section-3.2">
+        <h3 id="name-forwarding">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-forwarding" class="section-name selfRef">Forwarding</a>
+        </h3>
+<p id="section-3.2-1">A Relay computes the value it sends for each Object as follows:<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.2-2.1">
+            <p id="section-3.2-2.1.1">If the Relay supplied the Object from its own cache, it sends 1.<a href="#section-3.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.2-2.2">
+            <p id="section-3.2-2.2.1">If the Relay obtained the Object from upstream to satisfy this Fetch
+and the upstream value for that Object is nonzero, it sends that
+value plus one.  If the result would not fit in a variable-length
+integer, it sends 0.<a href="#section-3.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.2-2.3">
+            <p id="section-3.2-2.3.1">If the Relay obtained the Object from upstream and the upstream value
+is 0, or upstream sent no CACHE_DISTANCE, it sends 0.<a href="#section-3.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.2-3">A Relay <span class="bcp14">MUST NOT</span> forward received CACHE_DISTANCE properties unchanged.
+It recovers the incoming value for each Object from the upstream
+stream's state, applies the rules above, and re-encodes its own
+transitions.  The encoding remains sparse under composition: a
+transition appears only where the upstream value changes or where the
+Relay's own hit pattern changes, so a Relay that serves a contiguous
+run from its own cache collapses that run to a single property however
+it was marked upstream.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<p id="section-3.2-4">For example, consider a Fetch for Objects 1 through 7 over the path
+OP -&gt; R2 -&gt; R1 -&gt; subscriber, where R1 holds Objects 1 through 3 in its
+cache and R2 holds Objects 4 and 5.  R2 sends CACHE_DISTANCE=1 on Object
+4 and 0 on Object 6, two properties for the four Objects it supplies.
+R1 sends 1 on Object 1, 2 on Object 4, and 0 on Object 6.  The
+subscriber resolves the sequence 1, 1, 1, 2, 2, 0, 0 from three
+properties on the wire.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="cache-distance-processing">
+<section id="section-3.3">
+        <h3 id="name-processing-rules">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-processing-rules" class="section-name selfRef">Processing Rules</a>
+        </h3>
+<p id="section-3.3-1">CACHE_DISTANCE is hop-by-hop.  It is generated by the Relay serving the
+Fetch, describes only how that Relay served the request, and is not a
+property of the content.  An Original Publisher <span class="bcp14">MUST NOT</span> set it, and it
+<span class="bcp14">MUST NOT</span> be placed in Immutable Properties (<span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>).  A cache <span class="bcp14">MUST NOT</span>
+store it, and the Relay behavior above is permitted notwithstanding the
+general rule in <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span> that a Relay supporting a Property neither
+modifies it nor omits it from the cache.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.3-2">The value is advisory.  A receiver <span class="bcp14">MUST NOT</span> rely on it for correctness,
+and a Relay <span class="bcp14">MAY</span> report a value smaller than the true distance,
+including reporting only 0 and 1, where the depth of its topology is
+sensitive.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="iana">
@@ -1200,15 +1346,59 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-iana-considerations">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-4-1">This document has no IANA actions.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-1">This document registers the following entry in the "MOQ Properties"
+registry established by <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-2">
+        <caption><a href="#table-2" class="selfRef">Table 2</a></caption>
+<thead>
+          <tr>
+            <th class="text-right" rowspan="1" colspan="1">Type</th>
+            <th class="text-left" rowspan="1" colspan="1">Name</th>
+            <th class="text-left" rowspan="1" colspan="1">Scope</th>
+            <th class="text-left" rowspan="1" colspan="1">Specification</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-right" rowspan="1" colspan="1">0x1F0A</td>
+            <td class="text-left" rowspan="1" colspan="1">CACHE_DISTANCE</td>
+            <td class="text-left" rowspan="1" colspan="1">Object</td>
+            <td class="text-left" rowspan="1" colspan="1">This document, <a href="#cache-distance" class="auto internal xref">Section 3</a>
+</td>
+          </tr>
+        </tbody>
+      </table>
+<p id="section-4-3">The value is a variable-length integer giving the distance in hops to
+the cache that supplied the Object.  The code point is provisional for
+interoperability testing; the final value is to be assigned by IANA.  A
+two-byte code point is used because the property is sent per Object.<a href="#section-4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security">
+<section id="section-5">
+      <h2 id="name-security-considerations">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-5-1">CACHE_DISTANCE reveals how a Relay served a request and, on a fully
+instrumented path, the depth of the serving hierarchy.  Where that is
+sensitive, a Relay can flatten the values it reports as described in
+<a href="#cache-distance-processing" class="auto internal xref">Section 3.3</a>.  An endpoint <span class="bcp14">MUST NOT</span> treat the value as
+authenticated: it is set by the adjacent Relay, is not covered by
+end-to-end Object authentication, and a misbehaving Relay can report any
+value.  Because the property is never cached, a false value cannot
+persist beyond the Fetch that carried it.<a href="#section-5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-normative-references">
-<section id="section-5">
+<section id="section-6">
       <h2 id="name-normative-references">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
+<dt id="MOQT">[MOQT]</dt>
+      <dd>
+<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Vasiliev, V.</span>, <span class="refAuthor">Swett, I.</span>, and <span class="refAuthor">A. Frindell</span>, <span class="refTitle">"Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-transport-21</span>, <time datetime="2026-09-08" class="refDate">8 September 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-21">https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-21</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
       <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
@@ -1225,7 +1415,8 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-acknowledgments">
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
-<p id="appendix-A-1">TODO acknowledge.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-1">Portions of this document were drafted with the assistance of Claude
+(Claude Code, Anthropic).<a href="#appendix-A-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
@@ -1234,11 +1425,11 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
       </h2>
 <address class="vcard">
-        <div dir="auto" class="left"><span class="fn nameRole">Your Name Here</span></div>
-<div dir="auto" class="left"><span class="org">Your Organization Here</span></div>
+        <div dir="auto" class="left"><span class="fn nameRole">Alan Frindell</span></div>
+<div dir="auto" class="left"><span class="org">Meta</span></div>
 <div class="email">
 <span>Email:</span>
-<a href="mailto:your.email@example.com" class="email">your.email@example.com</a>
+<a href="mailto:afrind@meta.com" class="email">afrind@meta.com</a>
 </div>
 </address>
 </section>
